@@ -1,0 +1,81 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_login.css
+   Login page styling (works with the custom views in
+   resources/views/filament/pages/auth/login.blade.php and
+   resources/views/filament/layouts/login.blade.php).
+   Targets: .neu-input, .neu-btn, .neu-btn-primary.
+   ------------------------------------------------------------ */
+
+.neu-input {
+    width: 100%;
+    background-color: #f5f5f5;
+    color: #0a0a0a;
+    border-radius: 0.75rem;
+    padding: 0.625rem 1rem;
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.08), inset -3px -3px 6px rgba(255, 255, 255, 0.9);
+    border: 0;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.neu-input::placeholder {
+    color: #9ca3af;
+}
+
+.neu-input:focus {
+    outline: none;
+    box-shadow: inset 6px 6px 12px rgba(0, 0, 0, 0.10), inset -6px -6px 12px rgba(255, 255, 255, 0.9),
+                0 0 0 2px rgba(0, 0, 0, 0.30);
+}
+
+.neu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #fafafa;
+    color: #0a0a0a;
+    border-radius: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.06), -4px -4px 8px rgba(255, 255, 255, 0.9);
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.neu-btn:hover {
+    color: #000000;
+}
+
+.neu-btn:active {
+    box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.10), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+    color: #1f2937;
+}
+
+.neu-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.neu-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #000000;
+    color: #ffffff;
+    border-radius: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.20), -6px -6px 12px rgba(255, 255, 255, 0.9);
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.neu-btn-primary:hover {
+    background-color: #1f2937;
+}
+
+.neu-btn-primary:active {
+    box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.20), inset -4px -4px 8px rgba(255, 255, 255, 0.2);
+}

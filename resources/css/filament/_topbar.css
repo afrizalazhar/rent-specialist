@@ -1,0 +1,98 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_topbar.css
+   Styling for the top app bar.
+
+   Filament renders the chrome (<nav class="fi-topbar ...">). We style
+   the chrome here with pure CSS (background, shadow, height) and
+   restyle inner controls below. The HTML structure is left to
+   Filament's defaults so Alpine Float teleports (user-menu dropdown),
+   click handlers, and responsive behavior keep working.
+
+   Targets: .fi-topbar, .fi-topbar-open-sidebar-btn,
+   .fi-topbar-close-sidebar-btn, .fi-topbar-item,
+   .fi-global-search-field, .fi-user-menu.
+   ------------------------------------------------------------ */
+
+/* The topbar shell: raised white surface with a soft bottom shadow.
+   Filament handles sticky position, z-index, and responsive collapse.
+   Critically we do NOT add overflow:hidden or overflow-x-clip here —
+   that would clip the user-menu dropdown which Alpine Float teleports
+   outside the topbar. */
+.fi-body .fi-topbar {
+    background-color: #fafafa;
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.05),
+        0 -2px 6px rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Sidebar toggle buttons. */
+.fi-body .fi-topbar-open-sidebar-btn,
+.fi-body .fi-topbar-close-sidebar-btn {
+    border-radius: 0.75rem;
+    color: #374151;
+}
+
+.fi-body .fi-topbar-open-sidebar-btn:hover,
+.fi-body .fi-topbar-close-sidebar-btn:hover {
+    background-color: #f5f5f5;
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.04), inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+/* Topbar navigation items (when using top navigation mode). */
+.fi-body .fi-topbar-item {
+    border-radius: 0.75rem;
+    color: #374151;
+    font-weight: 500;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fi-body .fi-topbar-item:hover {
+    background-color: #f5f5f5;
+}
+
+.fi-body .fi-topbar-item.fi-active {
+    background-color: #000000;
+    color: #ffffff;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.12), -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+/* Global search trigger/field. */
+.fi-body .fi-global-search-field input,
+.fi-body input.fi-global-search-field {
+    background-color: #f5f5f5;
+    border-radius: 0.75rem;
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.06), inset -3px -3px 6px rgba(255, 255, 255, 0.9);
+}
+
+/* User menu avatar button. */
+.fi-body .fi-user-menu button {
+    border-radius: 9999px;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fi-body .fi-user-menu button:hover {
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08), -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+/* User menu dropdown panel — Filament teleports this to <body> via
+   Alpine Float. Anchor it to the right edge of the viewport with a
+   small offset so it never overflows the right side of the screen. */
+.fi-body .fi-user-menu .fi-dropdown-panel {
+    right: 0.75rem !important;
+    left: auto !important;
+    transform: none !important;
+    min-width: 14rem;
+    border-radius: 0.75rem;
+    box-shadow:
+        6px 6px 16px rgba(0, 0, 0, 0.12),
+        -6px -6px 16px rgba(255, 255, 255, 0.95);
+    background-color: #fafafa;
+}
+
+.fi-body .fi-user-menu .fi-dropdown-panel[data-placement] {
+    /* Alpine Float sets inline `top:` / `left:` styles. The override
+       above handles default placement; this catches cases where
+       Alpine has positioned the panel with inline transform. */
+    transform: none !important;
+}

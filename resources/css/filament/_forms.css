@@ -1,0 +1,81 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_forms.css
+   Form inputs, selects, textareas, field labels, and field wrappers.
+   Targets: .fi-input, .fi-select-input-el, .fi-textarea-input,
+   .fi-fo-select-input, .fi-fo-textarea-input, .fi-fo-text-input input,
+   .fi-fo-field-wrp-label, .fi-fo-field-wrp-helper-text,
+   .fi-fo-field-wrp-error-message.
+   ------------------------------------------------------------ */
+
+.fi-body .fi-input,
+.fi-body .fi-select-input-el,
+.fi-body .fi-textarea-input,
+.fi-body .fi-fo-select-input,
+.fi-body .fi-fo-textarea-input,
+.fi-body .fi-fo-text-input input,
+.fi-body input.fi-input,
+.fi-body textarea.fi-input,
+.fi-body select.fi-input {
+    background-color: #f5f5f5;
+    color: #0a0a0a;
+    border-radius: 0.75rem;
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.08), inset -3px -3px 6px rgba(255, 255, 255, 0.9);
+    border: 0;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fi-body .fi-input::placeholder,
+.fi-body .fi-select-input-el::placeholder,
+.fi-body .fi-textarea-input::placeholder {
+    color: #9ca3af;
+}
+
+.fi-body .fi-input:focus,
+.fi-body .fi-select-input-el:focus,
+.fi-body .fi-textarea-input:focus,
+.fi-body .fi-fo-select-input:focus,
+.fi-body .fi-fo-textarea-input:focus,
+.fi-body .fi-fo-text-input input:focus {
+    outline: none;
+    box-shadow: inset 6px 6px 12px rgba(0, 0, 0, 0.10), inset -6px -6px 12px rgba(255, 255, 255, 0.9),
+                0 0 0 2px rgba(0, 0, 0, 0.30);
+}
+
+/* Disabled/read-only inputs. */
+.fi-body .fi-input:disabled,
+.fi-body .fi-select-input-el:disabled,
+.fi-body .fi-textarea-input:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Field labels. */
+.fi-body .fi-fo-field-wrp-label {
+    color: #374151;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+/* Helper and error text. */
+.fi-body .fi-fo-field-wrp-helper-text {
+    color: #6b7280;
+    font-size: 0.75rem;
+}
+
+.fi-body .fi-fo-field-wrp-error-message {
+    color: #dc2626;
+    font-size: 0.75rem;
+}
+
+/* Checkboxes and radios. */
+.fi-body .fi-checkbox-input,
+.fi-body .fi-radio-input {
+    border-radius: 0.5rem;
+    border-color: #d1d5db;
+    color: #000000;
+}
+
+.fi-body .fi-checkbox-input:focus,
+.fi-body .fi-radio-input:focus {
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.20);
+}

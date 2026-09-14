@@ -1,0 +1,40 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_header.css
+   Descendant styling for the page heading area.
+   Filament's chrome (.fi-header) is NOT styled here — left to defaults.
+   Targets: .fi-header-heading, .fi-header-subheading,
+   .fi-breadcrumbs, .fi-breadcrumbs-item.
+   ------------------------------------------------------------ */
+
+.fi-header {
+    align-items: flex-start !important;
+}
+
+.fi-body .fi-header-heading {
+    color: #1f2937;
+    font-family: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+@media (min-width: 640px) {
+    .fi-body .fi-header-heading {
+        font-size: 2.25rem;
+    }
+}
+
+.fi-body .fi-header-subheading {
+    color: #6b7280;
+    font-size: 1rem;
+    margin-top: 0.375rem;
+}
+
+.fi-body .fi-breadcrumbs {
+    color: #9ca3af;
+}
+
+.fi-body .fi-breadcrumbs-item a:hover {
+    color: #000000;
+}

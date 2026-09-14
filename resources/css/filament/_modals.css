@@ -1,0 +1,33 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_modals.css
+   Modal windows and slide-overs.
+   Targets: .fi-modal-window, .fi-modal-heading, .fi-modal-content,
+   .fi-modal-close-button, .fi-modal-footer.
+   ------------------------------------------------------------ */
+
+.fi-body .fi-modal-window {
+    background-color: #fafafa;
+    border-radius: 1.25rem;
+    box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.10), -12px -12px 24px rgba(255, 255, 255, 0.95);
+    border: 0;
+}
+
+.fi-body .fi-modal-heading {
+    color: #1f2937;
+    font-family: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.fi-body .fi-modal-close-button {
+    border-radius: 0.75rem;
+    color: #6b7280;
+}
+
+.fi-body .fi-modal-close-button:hover {
+    background-color: #f5f5f5;
+}
+
+.fi-body .fi-modal-footer {
+    border-top: 1px solid #f5f5f5;
+}

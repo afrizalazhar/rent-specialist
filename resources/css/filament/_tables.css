@@ -1,0 +1,59 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_tables.css
+   Table containers, headers, rows, cells, and empty state.
+   Targets: .fi-ta-ctn, .fi-ta-header-cell, .fi-ta-row, .fi-ta-cell,
+   .fi-ta-heading, .fi-ta-empty-state, .fi-ta-empty-state-content,
+   .fi-ta-summary-header-cell-label, .fi-ta-col-summary-label.
+   ------------------------------------------------------------ */
+
+.fi-body .fi-ta-ctn {
+    background-color: #fafafa;
+    border-radius: 1.25rem;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.06), -4px -4px 8px rgba(255, 255, 255, 0.9);
+    border: 0;
+}
+
+.fi-body .fi-ta-header-cell {
+    background-color: #f5f5f5;
+    color: #374151;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-color: #e5e7eb;
+}
+
+.fi-body .fi-ta-row {
+    background-color: #fafafa;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fi-body .fi-ta-row:hover {
+    background-color: #f5f5f5;
+}
+
+.fi-body .fi-ta-cell {
+    color: #374151;
+    border-color: #e5e7eb;
+}
+
+.fi-body .fi-ta-heading {
+    color: #1f2937;
+    font-family: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+.fi-body .fi-ta-empty-state {
+    background-color: #fafafa;
+    border-radius: 1.25rem;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.06), -4px -4px 8px rgba(255, 255, 255, 0.9);
+    border: 0;
+}
+
+.fi-body .fi-ta-empty-state-content {
+    color: #6b7280;
+}
+
+.fi-body .fi-ta-summary-header-cell-label,
+.fi-body .fi-ta-col-summary-label {
+    color: #6b7280;
+}

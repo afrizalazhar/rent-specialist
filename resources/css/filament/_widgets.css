@@ -1,0 +1,50 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_widgets.css
+   Shared widget descendants: section cards, chart canvas.
+   Filament's grid (.fi-wi) gap is left to Filament's defaults so the
+   dashboard responsive layout works without interference.
+   Targets: .fi-wi-widget, .fi-section, .fi-section-header,
+   .fi-section-header-heading, .fi-section-content, .fi-wi-chart.
+   ------------------------------------------------------------ */
+
+.fi-body .fi-wi-widget {
+    container-type: inline-size;
+}
+
+.fi-body .fi-section {
+    background-color: #fafafa;
+    border-radius: 1.25rem;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.06), -4px -4px 8px rgba(255, 255, 255, 0.9);
+    border: 0;
+}
+
+.fi-body .fi-section-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.fi-body .fi-section-header-heading {
+    color: #1f2937;
+    font-family: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.fi-body .fi-section-content {
+    padding: 1.25rem;
+}
+
+/* Chart canvas wrapper — give it an explicit height so Chart.js has
+   room to draw. Without this the canvas collapses to 0px and the
+   chart appears empty even when data is loaded. */
+.fi-body .fi-wi-chart {
+    position: relative;
+    min-height: 18rem;
+    width: 100%;
+}
+
+.fi-body .fi-wi-chart canvas {
+    max-height: 20rem;
+    width: 100% !important;
+    height: 18rem !important;
+}

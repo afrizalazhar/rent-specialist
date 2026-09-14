@@ -1,0 +1,45 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_badges.css
+   Badge styling.
+   Targets: .fi-badge, .fi-badge-color-primary, .fi-badge-color-success,
+   .fi-badge-color-warning, .fi-badge-color-danger, .fi-badge-color-gray,
+   .fi-badge-color-info.
+   ------------------------------------------------------------ */
+
+.fi-body .fi-badge {
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+}
+
+.fi-body .fi-badge-color-primary {
+    background-color: #f5f5f5;
+    color: #0a0a0a;
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.06), inset -2px -2px 4px rgba(255, 255, 255, 0.9);
+}
+
+.fi-body .fi-badge-color-info {
+    background-color: rgba(59, 130, 246, 0.10);
+    color: #2563eb;
+}
+
+.fi-body .fi-badge-color-success {
+    background-color: rgba(22, 163, 74, 0.10);
+    color: #15803d;
+}
+
+.fi-body .fi-badge-color-warning {
+    background-color: rgba(217, 119, 6, 0.10);
+    color: #b45309;
+}
+
+.fi-body .fi-badge-color-danger {
+    background-color: rgba(220, 38, 38, 0.10);
+    color: #b91c1c;
+}
+
+.fi-body .fi-badge-color-gray {
+    background-color: #f5f5f5;
+    color: #374151;
+}

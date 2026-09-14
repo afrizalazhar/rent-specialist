@@ -1,0 +1,36 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_pagination.css
+   Pagination controls and records-per-page selector.
+   Targets: .fi-pagination, .fi-pagination-item,
+   .fi-pagination-records-per-page, .fi-pagination-item-active.
+   ------------------------------------------------------------ */
+
+.fi-body .fi-pagination {
+    background-color: #fafafa;
+    border-radius: 1.25rem;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.06), -4px -4px 8px rgba(255, 255, 255, 0.9);
+    border: 0;
+}
+
+.fi-body .fi-pagination-records-per-page {
+    background-color: #fafafa;
+    border-radius: 0.75rem;
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.06), inset -3px -3px 6px rgba(255, 255, 255, 0.9);
+}
+
+.fi-body .fi-pagination-item {
+    border-radius: 0.75rem;
+    color: #6b7280;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fi-body .fi-pagination-item:hover {
+    background-color: #f5f5f5;
+    color: #000000;
+}
+
+.fi-body .fi-pagination-item-active {
+    background-color: #000000;
+    color: #ffffff;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.12), -4px -4px 8px rgba(255, 255, 255, 0.9);
+}

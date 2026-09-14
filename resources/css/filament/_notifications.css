@@ -1,0 +1,38 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_notifications.css
+   Toast notifications and notification cards.
+   Targets: .fi-notification, .fi-notification-title,
+   .fi-notification-body, .fi-notification-icon,
+   .fi-notification-close-button.
+   ------------------------------------------------------------ */
+
+.fi-body .fi-notification {
+    background-color: #fafafa;
+    border-radius: 1.25rem;
+    box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.08), -8px -8px 16px rgba(255, 255, 255, 0.9);
+    border: 0;
+}
+
+.fi-body .fi-notification-title {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+.fi-body .fi-notification-body {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.fi-body .fi-notification-icon {
+    color: #000000;
+}
+
+.fi-body .fi-notification-close-button {
+    border-radius: 0.75rem;
+    color: #9ca3af;
+}
+
+.fi-body .fi-notification-close-button:hover {
+    background-color: #f5f5f5;
+    color: #374151;
+}

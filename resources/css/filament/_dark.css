@@ -1,0 +1,99 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_dark.css
+   Dark mode overrides. Keep class-based dark mode enabled.
+   All rules are scoped to .dark so light mode stays untouched.
+   ------------------------------------------------------------ */
+
+.dark .fi-body {
+    background-color: #0a0a0a;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.025) 1px, transparent 0);
+}
+
+.dark .fi-body .fi-header-heading,
+.dark .fi-body .fi-section-header-heading,
+.dark .fi-body .fi-ta-heading,
+.dark .fi-body .fi-modal-heading {
+    color: #f3f4f6;
+}
+
+.dark .fi-body .fi-header-subheading {
+    color: #9ca3af;
+}
+
+.dark .fi-body .fi-section,
+.dark .fi-body .fi-ta-ctn,
+.dark .fi-body .fi-modal-window,
+.dark .fi-body .fi-notification,
+.dark .fi-body .fi-ta-empty-state,
+.dark .fi-body .fi-pagination,
+.dark .fi-body .fi-pagination-records-per-page,
+.dark .fi-body .fi-wi-stats-overview-stat {
+    background-color: #171717;
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.40), -6px -6px 12px rgba(255, 255, 255, 0.04);
+}
+
+.dark .fi-body .fi-ta-header-cell {
+    background-color: #0a0a0a;
+    color: #d1d5db;
+    border-color: #262626;
+}
+
+.dark .fi-body .fi-ta-row {
+    background-color: #171717;
+}
+
+.dark .fi-body .fi-ta-row:hover {
+    background-color: #0a0a0a;
+}
+
+.dark .fi-body .fi-ta-cell {
+    color: #d1d5db;
+    border-color: #262626;
+}
+
+.dark .fi-body .fi-input,
+.dark .fi-body .fi-select-input-el,
+.dark .fi-body .fi-textarea-input,
+.dark .fi-body .fi-fo-select-input,
+.dark .fi-body .fi-fo-textarea-input,
+.dark .fi-body .fi-fo-text-input input,
+.dark .fi-body input.fi-input,
+.dark .fi-body textarea.fi-input,
+.dark .fi-body select.fi-input {
+    background-color: #0a0a0a;
+    color: #f3f4f6;
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.40), inset -3px -3px 6px rgba(255, 255, 255, 0.04);
+}
+
+.dark .fi-body .fi-input::placeholder {
+    color: #6b7280;
+}
+
+.dark .fi-body .fi-btn-color-gray {
+    background-color: #171717;
+    color: #e5e7eb;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.40), -4px -4px 8px rgba(255, 255, 255, 0.04);
+}
+
+.dark .fi-body .fi-sidebar-item-button:hover {
+    background-color: #171717;
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.30), inset -3px -3px 6px rgba(255, 255, 255, 0.03);
+}
+
+.dark .fi-body .fi-sidebar-item-active .fi-sidebar-item-button,
+.dark .fi-body .fi-sidebar-item.fi-active .fi-sidebar-item-button {
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.30), -4px -4px 8px rgba(255, 255, 255, 0.03);
+}
+
+.dark .fi-body .fi-topbar-open-sidebar-btn:hover,
+.dark .fi-body .fi-topbar-close-sidebar-btn:hover {
+    background-color: #171717;
+}
+
+.dark .fi-body .fi-topbar-item:hover {
+    background-color: #171717;
+}
+
+.dark .fi-body .fi-wi-stats-overview-stat-value {
+    color: #f3f4f6;
+}

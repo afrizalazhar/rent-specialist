@@ -1,0 +1,411 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Neomorphism base — applies to the public site.
+   The Filament admin theme lives in resources/css/filament/admin.css
+   and uses the same shadow tokens defined in tailwind.config.js.
+
+   The premium "automotive" landing-page tokens are layered on top
+   so the home view can opt into the dark-charcoal aesthetic
+   without affecting inner pages or the admin.
+   ============================================================ */
+
+@layer base {
+    html {
+        background-color: theme('colors.surface.200');
+        color: theme('colors.surface.800');
+        font-family: theme('fontFamily.sans');
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-surface-200 text-surface-800;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: theme('fontFamily.display');
+        @apply text-surface-800;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    a {
+        @apply text-clay-400 transition-colors duration-150;
+    }
+    a:hover {
+        @apply text-clay-500;
+    }
+}
+
+@layer components {
+    /* The signature neomorphism surface — raised, soft, two-shadow. */
+    .neu-surface {
+        @apply bg-surface-100 rounded-neu shadow-neu;
+    }
+
+    .neu-surface-sm {
+        @apply bg-surface-100 rounded-neu-sm shadow-neu-sm;
+    }
+
+    .neu-inset {
+        @apply bg-surface-200 rounded-neu shadow-neu-inset;
+    }
+
+    .neu-inset-sm {
+        @apply bg-surface-200 rounded-neu-sm shadow-neu-inset-sm;
+    }
+
+    /* Pressable buttons — flat, raised, become inset on :active. */
+    .neu-btn {
+        @apply inline-flex items-center justify-center gap-2
+               bg-surface-100 text-surface-800
+               rounded-neu-sm px-5 py-2.5
+               shadow-neu-sm
+               transition-all duration-150 ease-neu
+               font-medium text-sm
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-surface-900/30;
+    }
+    .neu-btn:hover {
+        @apply text-surface-900;
+    }
+    .neu-btn:active {
+        @apply shadow-neu-pressed text-surface-700;
+    }
+    .neu-btn:disabled {
+        @apply opacity-50 cursor-not-allowed shadow-neu-inset-sm;
+    }
+
+    /* Primary variant — black button with white text. */
+    .neu-btn-primary {
+        @apply inline-flex items-center justify-center gap-2
+               bg-surface-900 text-surface-50
+               rounded-neu-sm px-5 py-2.5
+               shadow-neu-clay
+               transition-all duration-150 ease-neu
+               font-semibold text-sm
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-surface-50/60;
+    }
+    .neu-btn-primary:hover {
+        @apply bg-surface-800;
+    }
+    .neu-btn-primary:active {
+        @apply shadow-neu-pressed;
+    }
+
+    /* Inputs sit on an inset surface, "carved" into the page. */
+    .neu-input {
+        @apply w-full bg-surface-200 text-surface-800 placeholder:text-surface-500
+               rounded-neu-sm px-4 py-2.5
+               shadow-neu-inset-sm
+               border-0
+               focus:outline-none focus:ring-2 focus:ring-surface-900/30
+               transition-all duration-150;
+    }
+    .neu-input:focus {
+        @apply shadow-neu-inset;
+    }
+
+    .neu-select {
+        @apply neu-input appearance-none pr-10;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23374151'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1.25rem;
+    }
+
+    /* Pills / chips for status badges — light tinted background, no shadow. */
+    .neu-pill {
+        @apply inline-flex items-center gap-1.5
+               rounded-full px-3 py-1 text-xs font-medium;
+    }
+    .neu-pill-success { @apply bg-sage-400/10 text-sage-500; }
+    .neu-pill-warning { @apply bg-amber-400/10 text-amber-500; }
+    .neu-pill-danger  { @apply bg-rust-400/10 text-rust-500; }
+    .neu-pill-neutral { @apply bg-surface-200 text-surface-700; }
+
+    /* Avatar / photo wrapper — inset, "carved" frame for vehicle photos. */
+    .neu-frame {
+        @apply rounded-neu bg-surface-200 shadow-neu-inset p-1.5;
+    }
+
+    /* Subtle paper-grid texture for the page background.
+       Very faint so it doesn't compete with the white-on-white look. */
+    .neu-paper {
+        background-color: theme('colors.surface.200');
+        background-image:
+            radial-gradient(circle at 1px 1px, rgba(0,0,0,0.012) 1px, transparent 0);
+        background-size: 24px 24px;
+    }
+}
+
+@layer utilities {
+    /* Disable the default Tailwind ring — neomorphism uses inset shadows instead. */
+    .no-ring { box-shadow: none !important; }
+}
+
+/* ============================================================
+   Premium landing-page components — used by home.blade.php.
+   These intentionally avoid neomorphism (no soft two-shadow
+   style). The look is closer to a polished automotive brochure:
+   dark charcoal foundation, off-white sections, one accent.
+   ============================================================ */
+@layer components {
+    /* --- Section surfaces ----------------------------------------- */
+
+    .section-ink {
+        @apply bg-ink-950 text-bone-50;
+    }
+
+    .section-ink-soft {
+        @apply bg-ink-900 text-bone-50;
+    }
+
+    .section-bone {
+        @apply bg-bone-50 text-ink-900;
+    }
+
+    .section-bone-soft {
+        @apply bg-bone-100 text-ink-900;
+    }
+
+    /* --- Eyebrow / kicker text ----------------------------------- */
+
+    .eyebrow {
+        @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-accent-500;
+    }
+
+    .eyebrow-on-dark {
+        @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-accent-400;
+    }
+
+    /* --- Display headlines --------------------------------------- */
+
+    .display-xl {
+        font-family: theme('fontFamily.display');
+        letter-spacing: -0.04em;
+        @apply font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05];
+    }
+
+    .display-lg {
+        font-family: theme('fontFamily.display');
+        letter-spacing: -0.04em;
+        @apply font-bold text-3xl sm:text-4xl md:text-5xl leading-[1.1];
+    }
+
+    .display-md {
+        font-family: theme('fontFamily.display');
+        letter-spacing: -0.03em;
+        @apply font-bold text-2xl sm:text-3xl md:text-4xl leading-[1.15];
+    }
+
+    /* --- Buttons -------------------------------------------------- */
+
+    /* Primary CTA — solid accent green, white text. Used for WhatsApp. */
+    .btn-accent {
+        @apply inline-flex items-center justify-center gap-2
+               rounded-premium bg-accent-500 text-ink-950
+               px-6 py-3 text-sm font-semibold
+               shadow-accent-glow
+               transition-all duration-200 ease-premium
+               hover:bg-accent-600 hover:shadow-premium-lg hover:-translate-y-0.5
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950;
+    }
+
+    /* Outline / ghost button — for secondary CTAs. */
+    .btn-ghost-light {
+        @apply inline-flex items-center justify-center gap-2
+               rounded-premium border border-bone-50/20 bg-transparent text-bone-50
+               px-6 py-3 text-sm font-semibold
+               transition-all duration-200 ease-premium
+               hover:border-bone-50/40 hover:bg-bone-50/5 hover:-translate-y-0.5
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-bone-50/40 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950;
+    }
+
+    .btn-ghost-dark {
+        @apply inline-flex items-center justify-center gap-2
+               rounded-premium border border-ink-900/15 bg-transparent text-ink-900
+               px-6 py-3 text-sm font-semibold
+               transition-all duration-200 ease-premium
+               hover:border-ink-900/30 hover:bg-ink-900/[0.03] hover:-translate-y-0.5
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-ink-900/30;
+    }
+
+    .btn-dark {
+        @apply inline-flex items-center justify-center gap-2
+               rounded-premium bg-ink-950 text-bone-50
+               px-6 py-3 text-sm font-semibold
+               shadow-ink-glow
+               transition-all duration-200 ease-premium
+               hover:bg-ink-800 hover:-translate-y-0.5
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-ink-700 focus-visible:ring-offset-2;
+    }
+
+    /* --- Cards ---------------------------------------------------- */
+
+    .card-dark {
+        @apply rounded-premium-lg bg-ink-900/60 border border-bone-50/[0.06]
+               shadow-premium transition-all duration-300 ease-premium
+               hover:border-bone-50/10 hover:shadow-premium-lg;
+    }
+
+    .card-light {
+        @apply rounded-premium-lg bg-white border border-ink-900/[0.06]
+               shadow-premium transition-all duration-300 ease-premium
+               hover:shadow-premium-lg hover:-translate-y-1;
+    }
+
+    .card-bone {
+        @apply rounded-premium-lg bg-bone-100 border border-ink-900/[0.04]
+               shadow-premium transition-all duration-300 ease-premium
+               hover:shadow-premium-lg;
+    }
+
+    /* --- Floating WhatsApp button -------------------------------- */
+
+    .fab-whatsapp {
+        @apply fixed bottom-5 right-5 z-40 md:hidden
+               inline-flex items-center justify-center
+               h-14 w-14 rounded-full bg-accent-500 text-ink-950
+               shadow-accent-glow
+               transition-transform duration-200 ease-premium
+               hover:scale-105 active:scale-95
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-300 focus-visible:ring-offset-2;
+    }
+
+    .fab-whatsapp::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 9999px;
+        background-color: theme('colors.accent.500');
+        animation: pulse-ring 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        z-index: -1;
+    }
+
+    /* --- Reveal-on-scroll ---------------------------------------- */
+
+    .reveal {
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* --- FAQ accordion (uses <details>/<summary>) --------------- */
+
+    .faq-item {
+        @apply rounded-premium-lg bg-white border border-ink-900/[0.06] shadow-premium-sm overflow-hidden;
+    }
+
+    .faq-item + .faq-item {
+        @apply mt-3;
+    }
+
+    .faq-item > summary {
+        @apply flex items-center justify-between gap-4 cursor-pointer
+               list-none px-5 sm:px-6 py-5
+               text-base sm:text-lg font-semibold text-ink-900
+               transition-colors duration-150;
+    }
+
+    .faq-item > summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .faq-item > summary::after {
+        content: '';
+        flex: 0 0 auto;
+        width: 1.25rem;
+        height: 1.25rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23171717' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .faq-item[open] > summary::after {
+        transform: rotate(180deg);
+    }
+
+    .faq-item > .faq-answer {
+        @apply px-5 sm:px-6 pb-5 text-sm sm:text-base text-ink-500 leading-relaxed;
+    }
+
+    /* --- Navbar --------------------------------------------------- */
+
+    .nav-bar {
+        @apply sticky top-0 z-40 transition-colors duration-300;
+    }
+
+    .nav-bar-default {
+        @apply bg-ink-950 border-b border-ink-800 text-bone-50;
+    }
+
+    .nav-bar-scrolled {
+        @apply bg-ink-950/95 backdrop-blur-lg border-b border-bone-50/10 shadow-premium;
+    }
+
+    .nav-bar-light {
+        @apply bg-bone-50/85 backdrop-blur-md border-b border-ink-900/[0.06] text-ink-900;
+    }
+
+    .nav-bar-light-scrolled {
+        @apply bg-bone-50/95 backdrop-blur-lg border-b border-ink-900/[0.08] shadow-premium-sm;
+    }
+
+    .nav-link {
+        @apply px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150;
+    }
+
+    .nav-link-on-dark {
+        @apply nav-link text-bone-50/80 hover:text-bone-50;
+    }
+
+    .nav-link-on-light {
+        @apply nav-link text-ink-900/70 hover:text-ink-900;
+    }
+
+    /* --- Vehicle card (premium variant) -------------------------- */
+
+    .vehicle-card {
+        @apply card-light overflow-hidden flex flex-col;
+    }
+
+    .vehicle-card-photo {
+        @apply relative aspect-[4/3] overflow-hidden bg-bone-200;
+    }
+
+    .vehicle-card-photo img {
+        @apply absolute inset-0 w-full h-full object-cover
+               transition-transform duration-500 ease-premium;
+    }
+
+    .vehicle-card:hover .vehicle-card-photo img {
+        transform: scale(1.04);
+    }
+}
+
+@layer utilities {
+    /* Disable the default Tailwind ring — neomorphism uses inset shadows instead. */
+    .no-ring { box-shadow: none !important; }
+
+    /* Hide scrollbar on the mobile menu without losing scroll. */
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { scrollbar-width: none; }
+
+    /* Keep selection readable on dark backgrounds. */
+    .selection-dark ::selection {
+        background-color: theme('colors.accent.500');
+        color: theme('colors.ink.950');
+    }
+}

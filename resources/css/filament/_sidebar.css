@@ -1,0 +1,93 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_sidebar.css
+   Styling for the left navigation sidebar.
+
+   Filament renders the chrome (<aside class="fi-sidebar ...">) and
+   its inner <header>/<nav>/<ul>. We style the chrome here with pure
+   CSS (background, shadow, border-radius) and restyle the items below.
+   The HTML structure is left to Filament's defaults so Alpine Float,
+   click handlers, and responsive behavior keep working.
+
+   Targets: .fi-sidebar, .fi-sidebar-header, .fi-sidebar-nav,
+   .fi-sidebar-nav-groups, .fi-sidebar-group, .fi-sidebar-group-label,
+   .fi-sidebar-group-collapse-button, .fi-sidebar-group-items,
+   .fi-sidebar-item, .fi-sidebar-item-button,
+   .fi-sidebar-item-active, .fi-sidebar-item-icon,
+   .fi-sidebar-item-label.
+   ------------------------------------------------------------ */
+
+/* The sidebar shell itself: raised white surface with a soft shadow.
+   Filament handles width, position, and responsive collapse. */
+.fi-body .fi-sidebar {
+    background-color: #fafafa;
+    box-shadow:
+        4px 4px 12px rgba(0, 0, 0, 0.06),
+        -4px -4px 12px rgba(255, 255, 255, 0.9);
+}
+
+/* Ensure the sidebar remains in the document flow on desktop so it doesn't overlap the main content.
+   Tailwind's lg:sticky utility sometimes gets purged from vendor files. */
+@media (min-width: 1024px) {
+    .fi-body .fi-sidebar {
+        position: sticky;
+        top: 0;
+    }
+}
+
+/* Header strip inside the sidebar (where the logo lives). */
+.fi-body .fi-sidebar-header {
+    padding: 1rem 1.25rem;
+}
+
+/* Nav list padding. */
+.fi-body .fi-sidebar-nav {
+    padding: 0.75rem 1rem;
+}
+
+/* Group label: uppercase, tracking, muted color. */
+.fi-body .fi-sidebar-group-label {
+    color: #6b7280;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* Nav item buttons. */
+.fi-body .fi-sidebar-item-button {
+    border-radius: 0.75rem;
+    color: #374151;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fi-body .fi-sidebar-item-button:hover {
+    background-color: #f5f5f5;
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.04), inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+/* Active item: filled primary surface with white text. */
+.fi-body .fi-sidebar-item-active .fi-sidebar-item-button,
+.fi-body .fi-sidebar-item.fi-active .fi-sidebar-item-button {
+    background-color: #000000;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.12), -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+.fi-body .fi-sidebar-item-active .fi-sidebar-item-icon,
+.fi-body .fi-sidebar-item.fi-active .fi-sidebar-item-icon,
+.fi-body .fi-sidebar-item-active .fi-sidebar-item-label,
+.fi-body .fi-sidebar-item.fi-active .fi-sidebar-item-label {
+    color: #ffffff;
+}
+
+.fi-body .fi-sidebar-item-icon {
+    color: #6b7280;
+}
+
+.fi-body .fi-sidebar-item-label {
+    color: #374151;
+}
+
+/* Group collapse chevron. */
+.fi-body .fi-sidebar-group-collapse-button {
+    color: #9ca3af;
+}

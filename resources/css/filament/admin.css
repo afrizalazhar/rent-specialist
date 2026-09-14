@@ -1,0 +1,34 @@
+/* ------------------------------------------------------------
+   resources/css/filament/admin.css
+   Theme entry file. This file only imports the modular partials
+   and Tailwind directives. Do not add long rules here — put them
+   in the partial that matches the UI area you are styling.
+
+   Note: @import must come before all other CSS statements, so the
+   Tailwind directives are placed after the imports. To make sure
+   our Filament overrides win against Tailwind utility classes of
+   the same specificity, every override selector is prefixed with
+   .fi-body (e.g. .fi-body .fi-section).
+   ------------------------------------------------------------ */
+
+@import '../../../vendor/filament/filament/resources/css/theme.css';
+
+@import "./_base.css";
+@import "./_sidebar.css";
+@import "./_topbar.css";
+@import "./_header.css";
+@import "./_stats.css";
+@import "./_widgets.css";
+@import "./_tables.css";
+@import "./_forms.css";
+@import "./_buttons.css";
+@import "./_badges.css";
+@import "./_modals.css";
+@import "./_notifications.css";
+@import "./_login.css";
+@import "./_pagination.css";
+@import "./_dark.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

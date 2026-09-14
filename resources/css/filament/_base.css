@@ -1,0 +1,68 @@
+/* ------------------------------------------------------------
+   resources/css/filament/_base.css
+   Global base styles: page background, font family, x-cloak reset,
+   and reusable neumorphism utility classes.
+   ------------------------------------------------------------ */
+
+/* Page body. */
+body.fi-body {
+    background-color: #f5f5f5;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.012) 1px, transparent 0);
+    background-size: 24px 24px;
+}
+
+/* Scope all content overrides to the admin body so they reliably win
+   against Tailwind utility classes inside Filament's markup. */
+
+/* Restore x-cloak behavior (Filament's base layout also ships these;
+   duplicated here so the compiled theme never accidentally wins). */
+[x-cloak],
+[x-cloak=""],
+[x-cloak="x-cloak"],
+[x-cloak="1"] {
+    display: none !important;
+}
+
+@media (max-width: 1023px) {
+    [x-cloak="-lg"] {
+        display: none !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    [x-cloak="lg"] {
+        display: none !important;
+    }
+}
+
+/* Reusable neumorphism utility classes (used by the custom login page
+   and any custom Blade views that need a raised/inset surface). */
+.neu-paper {
+    background-color: #f5f5f5;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.012) 1px, transparent 0);
+    background-size: 24px 24px;
+}
+
+.neu-surface {
+    background-color: #fafafa;
+    border-radius: 1.25rem;
+    box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.08), -8px -8px 16px rgba(255, 255, 255, 0.9);
+}
+
+.neu-surface-sm {
+    background-color: #fafafa;
+    border-radius: 0.75rem;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.06), -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+.neu-inset {
+    background-color: #f5f5f5;
+    border-radius: 1.25rem;
+    box-shadow: inset 6px 6px 12px rgba(0, 0, 0, 0.10), inset -6px -6px 12px rgba(255, 255, 255, 0.9);
+}
+
+.neu-inset-sm {
+    background-color: #f5f5f5;
+    border-radius: 0.75rem;
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.08), inset -3px -3px 6px rgba(255, 255, 255, 0.9);
+}
