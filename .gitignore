@@ -26,3 +26,7 @@ yarn-error.log
 /.agents/
 /.opencode/
 /skills-lock.json
+
+# Composer bootstrap (downloaded by deploy.sh on hosts without composer)
+/composer.phar
+/composer-setup.php

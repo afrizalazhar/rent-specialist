@@ -15,8 +15,9 @@ GitHub Actions is used only for CI (tests + lint), not for deployment.
 2. **PHP 8.4 CLI** — cPanel → *MultiPHP Manager*. Set the domain (or the
    directory you deploy to) to `ea-php84`. Without 8.4, the deploy script
    will fail.
-3. **Composer** — available in cPanel *Terminal* on most hosts; otherwise
-   install per Composer docs.
+3. **Composer** — auto-bootstrapped. If your cPanel doesn't ship with
+   `composer`, `deploy.sh` downloads `composer.phar` into the project on
+   the first run. Nothing to install.
 4. **Node.js + npm** — cPanel → *Setup Node.js App* (or *Node.js
    Selector*). Create an app with Node 20.x. Note the activation command
    it shows (`source .../enable.sh`) — paste it into the deploy script if
@@ -173,3 +174,64 @@ cPanel Git pulls are delta-only — only changed files transfer, no
 folder-creation round trips. First deploy takes ~30 s; subsequent deploys
 are seconds. Composer install and the Vite build run server-side, so
 GitHub Actions minutes drop to a few seconds of CI only.
+
+---
+
+## Monitoring and troubleshooting
+
+### 1. Did the webhook fire? (GitHub)
+
+GitHub repo → *Settings* → *Webhooks* → click the cPanel webhook →
+**Recent deliveries**. Each push should appear within a few seconds with
+a green ✓. If the delivery is red, expand it — the response body is
+cPanel's error message.
+
+### 2. Did cPanel pull? (cPanel)
+
+cPanel → *Files* → *Git™ Version Control* → *Manage* → **History** tab.
+Lists every pull with timestamp and commit hash. If the list is empty,
+the webhook never reached cPanel.
+
+### 3. Read the deploy log (no SSH needed)
+
+`deploy.sh` appends every run to:
+
+```
+storage/logs/deploy.log
+```
+
+Open it in **cPanel → File Manager → navigate to your deploy directory
+→ storage/logs/deploy.log → View / Edit**.
+
+Each run starts with `Deploy started`, lists PHP / Composer / Node
+versions, then logs each step. The last line of a successful run is
+`Deploy finished`. A failed run ends mid-step with the error.
+
+### 4. Run deploy.sh by hand (live output)
+
+If you have Terminal / SSH access:
+
+```bash
+cd ~/rent-specialist
+bash deploy.sh
+```
+
+You'll see each step live — much easier than reading the log after the
+fact. Same script cPanel runs; same log file it writes to.
+
+### 5. Laravel application logs
+
+If the deploy succeeds but the site errors at runtime, Laravel's own log
+captures it:
+
+```
+storage/logs/laravel.log
+```
+
+Same File Manager location as `deploy.log`.
+
+### 6. Web server errors
+
+cPanel → *Metrics* → *Errors* shows Apache's error log. Useful when
+the site returns 500 / blank page. Look for `public/index.php` or
+Laravel-specific stack traces.
