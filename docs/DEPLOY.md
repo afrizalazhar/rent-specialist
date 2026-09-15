@@ -55,18 +55,28 @@ cPanel → *Domains* → pick the domain → change **Document Root** to:
 
 ---
 
-## Step 3 — Paste the deploy script
+## Step 3 — Deploy task configuration (.cpanel.yml)
 
-In cPanel → *Git™ Version Control* → *Manage* → **Deployment script**,
-paste the **contents** of `deploy.sh` from this repo (cPanel versions
-v100–v106 only accept an inline script, not a file path).
+cPanel v110+ reads `.cpanel.yml` from the repo root to know what to run
+after each pull. This repo already includes one:
 
-The script:
-- Installs Composer deps (no dev)
-- Runs `npm ci && npm run build` (skipped with a warning if npm missing)
-- Runs `php artisan migrate --force`
-- Caches config / routes / views / events / filament
-- Creates `public/storage` symlink and `.env` on first run
+```yaml
+deployment:
+  tasks:
+    - /bin/bash deploy.sh
+```
+
+`deploy.sh` is the actual deploy script (also committed in this repo).
+It will:
+- Install Composer deps (no dev)
+- Run `npm ci && npm run build` (skipped with a warning if npm missing)
+- Run `php artisan migrate --force`
+- Cache config / routes / views / events / filament
+- Create `public/storage` symlink and `.env` on first run
+
+No further configuration is required on the cPanel side — once the Git
+repo is cloned (Step 1) and the webhook is in place (Step 4), cPanel
+will pick up `.cpanel.yml` automatically.
 
 ---
 

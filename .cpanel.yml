@@ -1,0 +1,10 @@
+---
+# cPanel Git Version Control deployment configuration.
+# cPanel runs these tasks in the repository directory after each pull
+# triggered by the GitHub webhook.
+#
+# Docs: https://docs.cpanel.net/knowledge-base/web-services/guide-to-git-deployment/
+
+deployment:
+  tasks:
+    - /bin/bash deploy.sh
