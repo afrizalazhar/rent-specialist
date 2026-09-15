@@ -26,7 +26,7 @@ Logika harga sewa dipisahkan ke `App\Services\Pricing\PricingCalculator` (murni,
 
 ## Tech stack
 
-- Laravel 11 (PHP 8.3)
+- Laravel 11 (PHP 8.4)
 - Filament v3 untuk admin
 - Livewire 3 + Blade untuk situs publik
 - Tailwind CSS (desain neomorphism: palet krem/clay — lihat `tailwind.config.js`)
@@ -36,7 +36,7 @@ Logika harga sewa dipisahkan ke `App\Services\Pricing\PricingCalculator` (murni,
 
 ## Setup
 
-Prasyarat: PHP 8.2+, Composer, Node.js + npm.
+Prasyarat: PHP 8.4+, Composer, Node.js + npm.
 
 ```bash
 composer install

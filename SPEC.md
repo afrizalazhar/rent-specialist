@@ -59,7 +59,7 @@ A single-operator rental vehicle website with an admin dashboard. Public site is
 
 ## Stack
 
-- Laravel 11 (PHP 8.3).
+- Laravel 11 (PHP 8.4).
 - Filament v3 for the admin.
 - Livewire 3 + Blade for the public site.
 - Tailwind CSS.
