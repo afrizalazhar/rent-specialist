@@ -1,13 +1,15 @@
 # =============================================================================
-# Deploy to cPanel via SFTP
+# Deploy to cPanel via FTPS
 # =============================================================================
-# Uploads the built Laravel app to a cPanel shared-hosting account using
-# SFTP. Vendor, npm-built assets, and optimized autoloader are produced in
-# CI so the server does not need them installed.
+# Uploads the built Laravel app to a cPanel shared-hosting account over
+# FTP-over-TLS (FTPS, port 21). Uses the standard cPanel FTP account.
+# Vendor, npm-built assets, and optimized autoloader are produced in CI
+# so the server does not need them installed.
 #
 # Setup on the cPanel side (one-time):
 #   1. Create an FTP account in cPanel (File Manager -> FTP Accounts).
-#      Enabling SSH for that account also works (same creds, port 22).
+#      Note: "FTP_SERVER" below is usually the same as your domain
+#      (e.g. ftp.example.com). cPanel also supports the server hostname.
 #   2. In cPanel, set the domain's document root to point at the `public/`
 #      directory inside the upload target (see FTP_SERVER_DIR below).
 #      Example: upload target = /home/user/rent-specialist, document root =
@@ -25,8 +27,8 @@
 #
 # Required GitHub repository secrets (Settings -> Secrets and variables):
 #   FTP_SERVER       e.g. ftp.example.com  (or the cPanel server hostname)
-#   FTP_USERNAME     cPanel FTP/SSH user
-#   FTP_PASSWORD     cPanel FTP/SSH password
+#   FTP_USERNAME     cPanel FTP user
+#   FTP_PASSWORD     cPanel FTP password
 #   FTP_SERVER_DIR   absolute server path to upload to,
 #                    e.g. /home/youruser/rent-specialist
 # =============================================================================
@@ -91,14 +93,13 @@ jobs:
       # vendor/ and node_modules/ are not excluded because vendor/ holds the
       # pre-installed PHP dependencies (node_modules/ is excluded below as it
       # is not needed at runtime).
-      - name: Upload to cPanel via SFTP
+      - name: Upload to cPanel via FTPS
         uses: SamKirkland/ftp-deploy-action@v4.3.0
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: sftp
-          port: 22
+          protocol: ftps
           local-dir: ./
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
           max-versions: 3
