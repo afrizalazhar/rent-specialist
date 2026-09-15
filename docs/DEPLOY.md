@@ -209,15 +209,22 @@ versions, then logs each step. The last line of a successful run is
 
 ### 4. Run deploy.sh by hand (live output)
 
-If you have Terminal / SSH access:
+If you have Terminal / SSH access, open **two terminals**:
 
 ```bash
+# Terminal 1: watch the log live
+cd ~/rent-specialist
+tail -f storage/logs/deploy.log
+
+# Terminal 2: trigger the deploy
 cd ~/rent-specialist
 bash deploy.sh
 ```
 
-You'll see each step live — much easier than reading the log after the
-fact. Same script cPanel runs; same log file it writes to.
+cPanel's deploy environment doesn't support the bash process
+substitution needed to mirror stdout to both terminal and log, so the
+script writes to the log file only. `tail -f` gives you the same live
+view.
 
 ### 5. Laravel application logs
 

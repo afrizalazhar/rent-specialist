@@ -36,8 +36,12 @@ log() {
   printf '%s [%s] %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$$" "$*"
 }
 
-# --- Start logging (tee stdout+stderr to log file) --------------------------
-exec > >(tee -a "$LOG_FILE") 2>&1
+# --- Start logging (append stdout+stderr to log file) -----------------------
+# cPanel's deploy environment doesn't support process substitution (the
+# `>(...)` syntax relies on /dev/fd which is missing), so we just append
+# to the log file. For live monitoring via SSH, run `tail -f $LOG_FILE`
+# in a second terminal while you trigger a deploy.
+exec >>"$LOG_FILE" 2>&1
 
 log "Deploy started"
 log "PHP: $(php -v 2>/dev/null | head -1 || echo 'php not found')"
