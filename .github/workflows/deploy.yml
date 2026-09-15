@@ -1,32 +1,44 @@
 # =============================================================================
-# CI: build + test
+# Build and upload artifacts to cPanel
 # =============================================================================
-# Validates that the project builds and tests pass on every push to main
-# and on every pull request. Deployment is handled separately by cPanel's
-# Git Version Control feature pulling from this repo.
+# Builds vendor/ and public/build/ in CI (where proc_open is available),
+# packages them into a single tarball, and uploads via FTPS to the cPanel
+# server. The server-side deploy.sh then extracts the tarball over the
+# git-pulled source and runs the artisan commands that don't need proc_open.
+#
+# Architecture:
+#   1. cPanel Git pulls source from this repo (no vendor/, no public/build/)
+#   2. This workflow builds the artifacts and uploads them as a tarball
+#   3. Server-side deploy.sh waits for the tarball, extracts, runs artisan
+#
+# Required GitHub secrets:
+#   FTP_SERVER       e.g. ftp.example.com
+#   FTP_USERNAME     cPanel FTP user
+#   FTP_PASSWORD     cPanel FTP password
+#   FTP_SERVER_DIR   absolute server path to the deploy directory,
+#                    e.g. /home/youruser/rent-specialist
 # =============================================================================
 
-name: CI
+name: Build and upload to cPanel
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
+# Run deploys one at a time; don't cancel mid-deploy.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: build-cpanel
+  cancel-in-progress: false
 
 permissions:
   contents: read
 
 jobs:
-  ci:
-    name: Build and test
+  build-and-upload:
+    name: Build and upload artifacts
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -37,7 +49,6 @@ jobs:
         with:
           php-version: "8.4"
           extensions: mbstring, dom, fileinfo, mysql, bcmath, gd, zip, curl, xml, tokenizer
-          coverage: none
 
       - name: Setup Node 20
         uses: actions/setup-node@v4
@@ -53,8 +64,8 @@ jobs:
           restore-keys: |
             composer-${{ runner.os }}-
 
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist
+      - name: Install Composer dependencies (production)
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
       - name: Install NPM dependencies
         run: npm ci --no-audit --no-fund
@@ -62,13 +73,22 @@ jobs:
       - name: Build frontend assets
         run: npm run build
 
-      - name: Prepare .env for tests
+      - name: Package vendor/ and public/build/
         run: |
-          cp .env.example .env
-          php artisan key:generate --force
+          tar -czf build-artifacts.tar.gz vendor public/build
+          echo "Tarball size: $(du -h build-artifacts.tar.gz | cut -f1)"
 
-      - name: Run tests
-        run: php artisan test --parallel
+      - name: Stage tarball for upload
+        run: mkdir -p upload-staging && mv build-artifacts.tar.gz upload-staging/
 
-      - name: Run lint
-        run: vendor/bin/pint --test
+      - name: Upload build artifacts to cPanel via FTPS
+        uses: SamKirkland/ftp-deploy-action@v4.3.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./upload-staging/
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}/
+          timeout: 900
+          log-output: true

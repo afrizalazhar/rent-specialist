@@ -1,27 +1,32 @@
 # Deploying to cPanel
 
-Deployment is done by **cPanel's Git Version Control** feature: each push to
-GitHub triggers a webhook, cPanel pulls the latest commit on the server,
-and runs `deploy.sh` to install dependencies and refresh caches.
+Deployment uses a hybrid setup:
 
-GitHub Actions is used only for CI (tests + lint), not for deployment.
+- **cPanel's Git Version Control** pulls source code on every push
+  (no `vendor/`, no `public/build/` — those are built in CI).
+- **GitHub Actions** builds the artifacts, packages them into a single
+  tarball, and uploads via FTPS.
+- **Server-side `deploy.sh`** waits for the tarball, extracts it over
+  the git-pulled source, and runs the artisan commands that don't
+  need `proc_open`.
+
+This works on shared cPanel hosts that have `proc_open` disabled
+(which blocks Composer and any subprocess-spawning artisan command).
 
 ---
 
 ## Prerequisites (one-time, on the cPanel server)
 
-1. **SSH / Terminal access** — cPanel → *Security* → *SSH Access*. Most
-   shared hosts require you to explicitly enable it.
-2. **PHP 8.4 CLI** — cPanel → *MultiPHP Manager*. Set the domain (or the
-   directory you deploy to) to `ea-php84`. Without 8.4, the deploy script
-   will fail.
-3. **Composer** — auto-bootstrapped. If your cPanel doesn't ship with
-   `composer`, `deploy.sh` downloads `composer.phar` into the project on
-   the first run. Nothing to install.
-4. **Node.js + npm** — cPanel → *Setup Node.js App* (or *Node.js
-   Selector*). Create an app with Node 20.x. Note the activation command
-   it shows (`source .../enable.sh`) — paste it into the deploy script if
-   npm is not on the default PATH (see Troubleshooting).
+1. **SSH / Terminal access** — cPanel → *Security* → *SSH Access*.
+   Most shared hosts require you to enable it explicitly.
+2. **PHP 8.4 CLI** — cPanel → *MultiPHP Manager*. Set the domain (or
+   the deploy directory) to `ea-php84`. Without 8.4, artisan and the
+   lock file won't agree.
+3. **An FTP account** for the Actions workflow to upload to. Use the
+   main cPanel FTP account or create a dedicated one in *Files →
+   FTP Accounts*.
+4. **No Composer, no Node.js required on the server** — everything
+   that needs them runs in CI.
 
 ---
 
@@ -37,10 +42,8 @@ cPanel → *Files* → *Git™ Version Control* → **Create**.
 | Branch         | `main`                                      |
 
 For HTTPS auth: create a GitHub Personal Access Token (Settings →
-Developer settings → PATs, **classic**, scope: `repo`) and paste it as
-the password when prompted.
-
-After creation, cPanel shows a **Manage** page. Open it.
+Developer settings → PATs, **classic**, scope: `repo`) and paste it
+as the password when prompted.
 
 ---
 
@@ -52,14 +55,14 @@ cPanel → *Domains* → pick the domain → change **Document Root** to:
 /home/<cpanel-user>/rent-specialist/public
 ```
 
-(Or symlink: `public_html/public` → `../rent-specialist/public`.)
+(Or symlink `public_html/public` → `../rent-specialist/public`.)
 
 ---
 
-## Step 3 — Deploy task configuration (.cpanel.yml)
+## Step 3 — Deploy task (`.cpanel.yml`)
 
-cPanel v110+ reads `.cpanel.yml` from the repo root to know what to run
-after each pull. This repo already includes one:
+`.cpanel.yml` at the repo root tells cPanel to run `deploy.sh` after
+each pull. Already committed in this repo:
 
 ```yaml
 deployment:
@@ -67,26 +70,18 @@ deployment:
     - /bin/bash deploy.sh
 ```
 
-`deploy.sh` is the actual deploy script (also committed in this repo).
-It will:
-- Install Composer deps (no dev)
-- Run `npm ci && npm run build` (skipped with a warning if npm missing)
+`deploy.sh` will (after the build tarball is in place):
+- Extract `vendor/` and `public/build/` from the tarball
 - Run `php artisan migrate --force`
 - Cache config / routes / views / events / filament
 - Create `public/storage` symlink and `.env` on first run
-
-No further configuration is required on the cPanel side — once the Git
-repo is cloned (Step 1) and the webhook is in place (Step 4), cPanel
-will pick up `.cpanel.yml` automatically.
 
 ---
 
 ## Step 4 — Add the webhook in GitHub
 
-In cPanel's Git™ manage page, copy the **Webhook URL** it displays. Then
-in GitHub:
-
-*Settings → Webhooks → Add webhook*
+In cPanel's Git™ manage page, copy the **Webhook URL** it shows. Then
+in GitHub: *Settings → Webhooks → Add webhook*
 
 | Field         | Value                                  |
 |---------------|----------------------------------------|
@@ -95,23 +90,46 @@ in GitHub:
 | Events        | Just the *push* event                  |
 | SSL verify    | enabled                                |
 
-Save. The first push to `main` after this will arrive at cPanel within a
-few seconds.
+Save. Each push to `main` reaches it within seconds.
 
 ---
 
-## Step 5 — First-time server setup
+## Step 5 — GitHub Actions secrets
 
-Trigger an initial deploy (push a commit, or click **Pull** in cPanel's
-Git manage page). Then SSH into the server:
+Repo → *Settings → Secrets and variables → Actions → New repository
+secret*. Add:
+
+| Name            | Value                                          |
+|-----------------|------------------------------------------------|
+| `FTP_SERVER`    | `ftp.example.com` (or your cPanel hostname)    |
+| `FTP_USERNAME`  | cPanel FTP user                                |
+| `FTP_PASSWORD`  | cPanel FTP password                            |
+| `FTP_SERVER_DIR`| `/home/<cpanel-user>/rent-specialist`          |
+
+---
+
+## Step 6 — First-time server setup
+
+Trigger an initial deploy (push any commit, or click **Pull** in
+cPanel's Git manage page — but wait for the Actions run to finish
+and upload the tarball first). Then SSH in:
 
 ```bash
 cd ~/rent-specialist
 
+# Verify the tarball is present
+ls -lh build-artifacts.tar.gz
+
+# Pull the source if not already done
+# (cPanel's Pull button or: git pull origin main)
+
+# Run deploy.sh manually to see live output
+bash deploy.sh
+
 # Edit .env with real DB / mail credentials
 nano .env
 
-# Generate APP_KEY (replace the placeholder line in .env)
+# Generate APP_KEY (replaces the placeholder in .env)
 php artisan key:generate --force
 
 # Make storage writable
@@ -127,72 +145,89 @@ Visit the domain — the app should be live.
 
 ## Troubleshooting
 
-**`npm: command not found` in deploy log**
-Node.js is installed but not on the default PATH in cPanel's deploy
-environment. Edit `deploy.sh` and prepend the activation line from
-*Setup Node.js App*, e.g.:
+**Deploy log shows `Waiting for build-artifacts.tar.gz ... ERROR`**
+GitHub Actions did not finish (or failed) before the 5-minute wait
+expired. Check the Actions run for errors. Re-run the workflow once
+it passes, then in the server run `./deploy.sh` manually — the
+tarball will already be in place.
+
+**`proc_open` / `Process class relies on proc_open` errors**
+Should not happen any more — all subprocess-spawning work is in CI.
+If you still see it, an artisan command is unexpectedly spawning a
+process; check `php artisan` docs for the specific command.
+
+**Deploy succeeds but the site is blank / 500**
+- `vendor/` or `public/build/` missing → check the tarball arrived
+- `.env` missing or wrong credentials → fix in cPanel File Manager
+- Document root wrong → re-check Step 2
+
+**FTPS upload fails in the Actions log**
+Wrong FTP credentials, wrong path, or TLS mismatch. Verify the
+values in *Settings → Secrets and variables → Actions*. cPanel's
+default FTPS uses port 21 with explicit TLS — the action handles
+this automatically when `protocol: ftps`.
+
+**cPanel's Git webhook not firing**
+In cPanel → Git™ manage → *History* tab — if empty, the webhook
+never arrived. Regenerate the webhook URL in cPanel and re-add it
+in GitHub.
+
+**Manual deploy without waiting for CI**
+Useful for hotfixes. SSH in and run:
 
 ```bash
-source /home/<user>/nodevenv/rent-specialist/20/bin/activate
-```
-
-**`Your lock file does not contain a compatible set of packages`**
-The server's PHP is older than the lock requires. Set the document-root
-directory to `ea-php84` in MultiPHP Manager. Verify with `php -v` in
-Terminal while inside the deploy directory.
-
-**Deploy runs but the site shows the default cPanel page**
-Document root is wrong. Re-check Step 2.
-
-**Webhook not firing**
-In cPanel → Git™ manage → *History* tab, check whether pulls are
-arriving. If they are, the webhook is fine. If not, regenerate the
-webhook URL in cPanel and re-add it in GitHub.
-
-**Composer runs out of memory**
-Some shared hosts cap PHP memory. In cPanel → *MultiPHP INI Editor* →
-set `memory_limit = 512M` for the deploy directory.
-
----
-
-## Manual deploy
-
-If you ever need to deploy without pushing to GitHub (e.g. emergency hotfix):
-
-```bash
-ssh <user>@<server>
 cd ~/rent-specialist
 git pull origin main
-./deploy.sh
+bash deploy.sh
 ```
 
----
-
-## Why this is faster than FTP upload
-
-cPanel Git pulls are delta-only — only changed files transfer, no
-folder-creation round trips. First deploy takes ~30 s; subsequent deploys
-are seconds. Composer install and the Vite build run server-side, so
-GitHub Actions minutes drop to a few seconds of CI only.
+This works only if the CI build for the current commit has already
+uploaded its tarball (otherwise deploy.sh errors out after the wait).
+If you're deploying without CI, you must upload a pre-built
+tarball yourself (FTP it to `build-artifacts.tar.gz` in the deploy
+directory) before running deploy.sh.
 
 ---
 
-## Monitoring and troubleshooting
+## How a deploy runs end to end
 
-### 1. Did the webhook fire? (GitHub)
+1. You push a commit to `main`.
+2. **GitHub** sends a webhook to **cPanel** → cPanel `git pull`s the
+   source code into `~/rent-specialist`.
+3. **GitHub Actions** starts: `composer install --no-dev`, `npm ci`,
+   `npm run build`, packages `vendor/` + `public/build/` into
+   `build-artifacts.tar.gz`, uploads via FTPS to
+   `~/rent-specialist/build-artifacts.tar.gz`.
+4. **cPanel** runs `.cpanel.yml` → `deploy.sh`.
+5. `deploy.sh` waits up to 5 min for the tarball to appear, then
+   extracts it, runs `migrate --force`, refreshes caches.
+6. Site is live at the new commit.
 
-GitHub repo → *Settings* → *Webhooks* → click the cPanel webhook →
-**Recent deliveries**. Each push should appear within a few seconds with
-a green ✓. If the delivery is red, expand it — the response body is
-cPanel's error message.
+Typical total time: 3–5 minutes from push to live (mostly waiting
+on `composer install` and `npm ci` in CI).
 
-### 2. Did cPanel pull? (cPanel)
+---
 
-cPanel → *Files* → *Git™ Version Control* → *Manage* → **History** tab.
-Lists every pull with timestamp and commit hash. If the list is empty,
-the webhook never reached cPanel.
+## Monitoring and debugging
 
-### 3. Read the deploy log (no SSH needed)
+### Did the webhook fire?
+
+GitHub → repo → *Settings* → *Webhooks* → click the cPanel webhook
+→ **Recent deliveries**. Green ✓ = ok; red ✗ = response body shows
+the error.
+
+### Did cPanel pull?
+
+cPanel → *Files* → *Git™ Version Control* → *Manage* → **History**.
+Lists every pull with timestamp and commit hash.
+
+### Did Actions build and upload succeed?
+
+GitHub → repo → **Actions** tab → the latest run. Each step shows
+✓ or ✗. The upload step's log shows the tarball size and FTPS
+response.
+
+### Read the deploy log (no SSH needed)
 
 `deploy.sh` appends every run to:
 
@@ -200,45 +235,25 @@ the webhook never reached cPanel.
 storage/logs/deploy.log
 ```
 
-Open it in **cPanel → File Manager → navigate to your deploy directory
-→ storage/logs/deploy.log → View / Edit**.
+Open it in **cPanel → File Manager → ~/rent-specialist/storage/logs/
+deploy.log → View / Edit**.
 
-Each run starts with `Deploy started`, lists PHP / Composer / Node
-versions, then logs each step. The last line of a successful run is
-`Deploy finished`. A failed run ends mid-step with the error.
-
-### 4. Run deploy.sh by hand (live output)
-
-If you have Terminal / SSH access, open **two terminals**:
+### Watch deploy.sh live (SSH)
 
 ```bash
-# Terminal 1: watch the log live
-cd ~/rent-specialist
-tail -f storage/logs/deploy.log
+# Terminal 1
+cd ~/rent-specialist && tail -f storage/logs/deploy.log
 
-# Terminal 2: trigger the deploy
-cd ~/rent-specialist
-bash deploy.sh
+# Terminal 2
+cd ~/rent-specialist && bash deploy.sh
 ```
 
-cPanel's deploy environment doesn't support the bash process
-substitution needed to mirror stdout to both terminal and log, so the
-script writes to the log file only. `tail -f` gives you the same live
-view.
+### Laravel / Apache logs
 
-### 5. Laravel application logs
-
-If the deploy succeeds but the site errors at runtime, Laravel's own log
-captures it:
+If the deploy succeeded but the site errors at runtime:
 
 ```
-storage/logs/laravel.log
+storage/logs/laravel.log   # application errors
 ```
 
-Same File Manager location as `deploy.log`.
-
-### 6. Web server errors
-
-cPanel → *Metrics* → *Errors* shows Apache's error log. Useful when
-the site returns 500 / blank page. Look for `public/index.php` or
-Laravel-specific stack traces.
+cPanel → *Metrics* → *Errors* shows Apache's error log.
