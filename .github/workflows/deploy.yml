@@ -1,0 +1,146 @@
+# =============================================================================
+# Deploy to cPanel via SFTP
+# =============================================================================
+# Uploads the built Laravel app to a cPanel shared-hosting account using
+# SFTP. Vendor, npm-built assets, and optimized autoloader are produced in
+# CI so the server does not need them installed.
+#
+# Setup on the cPanel side (one-time):
+#   1. Create an FTP account in cPanel (File Manager -> FTP Accounts).
+#      Enabling SSH for that account also works (same creds, port 22).
+#   2. In cPanel, set the domain's document root to point at the `public/`
+#      directory inside the upload target (see FTP_SERVER_DIR below).
+#      Example: upload target = /home/user/rent-specialist, document root =
+#               /home/user/rent-specialist/public
+#      Or symlink public_html/public -> /home/user/rent-specialist/public.
+#   3. Create .env on the server (NEVER commit it). Copy from .env.example
+#      which is uploaded by this workflow, then edit DB / APP_KEY values.
+#   4. Generate APP_KEY once on the server:
+#        php artisan key:generate --force
+#      (Requires SSH/terminal access. Most cPanel plans include Terminal.)
+#   5. After the first deploy, ensure storage is writable:
+#        chmod -R 775 storage bootstrap/cache
+#      and create the public storage symlink:
+#        php artisan storage:link
+#
+# Required GitHub repository secrets (Settings -> Secrets and variables):
+#   FTP_SERVER       e.g. ftp.example.com  (or the cPanel server hostname)
+#   FTP_USERNAME     cPanel FTP/SSH user
+#   FTP_PASSWORD     cPanel FTP/SSH password
+#   FTP_SERVER_DIR   absolute server path to upload to,
+#                    e.g. /home/youruser/rent-specialist
+# =============================================================================
+
+name: Deploy to cPanel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never run two deploys to the same target at the same time.
+concurrency:
+  group: deploy-cpanel
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and upload to cPanel
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, dom, fileinfo, mysql, bcmath, gd, zip, curl, xml, tokenizer
+          coverage: none
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-
+
+      - name: Install Composer dependencies (production)
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      # Upload everything except dev / VCS / agent files. .env.example is
+      # intentionally kept so the server has a template for first-time setup.
+      # vendor/ and node_modules/ are not excluded because vendor/ holds the
+      # pre-installed PHP dependencies (node_modules/ is excluded below as it
+      # is not needed at runtime).
+      - name: Upload to cPanel via SFTP
+        uses: SamKirkland/ftp-deploy-action@v4.3.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: sftp
+          port: 22
+          local-dir: ./
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          max-versions: 3
+          timeout: 900
+          log-output: true
+          exclude: |
+            **/.git/**
+            **/.git
+            **/node_modules/**
+            **/tests/**
+            **/.github/**
+            **/.agents/**
+            **/.opencode/**
+            **/storage/logs/*
+            **/storage/framework/cache/data/*
+            **/storage/framework/sessions/*
+            **/storage/framework/views/*
+            **/storage/debugbar/**
+            **/.env
+            **/.env.backup
+            **/.env.production
+            **/auth.json
+            **/.phpunit.cache/**
+            **/.phpunit.result.cache
+            **/.phpactor.json
+            **/.fleet/**
+            **/.idea/**
+            **/.nova/**
+            **/.vscode/**
+            **/.zed/**
+            **/.editorconfig
+            **/.gitattributes
+            **/.gitignore
+            **/.dockerignore
+            **/Homestead.json
+            **/Homestead.yaml
+            **/npm-debug.log
+            **/yarn-error.log
+            **/phpunit.xml
+            **/README.md
+            **/SPEC.md
+            **/CONTEXT.md
+            **/AGENT-BRIEF.md
+            **/docs/**
+            **/skills-lock.json
